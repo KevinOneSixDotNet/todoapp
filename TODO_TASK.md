@@ -75,8 +75,8 @@
 ## Phase 4 — Polish & Submission
 
 - [ ] End-to-end smoke test (register → login → CRUD todos → sign out)
-- [ ] `.gitignore` review (exclude todo.db, dist, obj, bin)
-- [ ] README.md — setup steps, assumptions, scalability notes, future work
+- [x] `.gitignore` — expanded to cover `*.db*`, `site/dist/`, `site/node_modules/`, `.vs/`; db files un-tracked via `git rm --cached`
+- [x] README.md — setup steps, API reference, architecture trade-offs, security notes, testing strategy, assumptions, future work
 - [ ] Final review: no console errors, no lint errors
 - [ ] Push to GitHub, verify public link
 
