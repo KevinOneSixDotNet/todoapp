@@ -1,2 +1,4 @@
 /api/bin/*
 /api/obj/*
+/api.tests/bin/*
+/api.tests/obj/*

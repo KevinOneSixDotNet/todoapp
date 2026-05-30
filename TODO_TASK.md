@@ -1,6 +1,7 @@
 # FunctionHealth Take-Home — Task Tracker
 
 ## Status Legend
+
 - [ ] Not started
 - [~] In progress
 - [x] Done
@@ -8,6 +9,7 @@
 ---
 
 ## Phase 1 — Scaffold & Foundation ✅
+
 - [x] Scaffold .NET 10 Web API (`api/`) with controllers
 - [x] Add NuGet packages (EF Core SQLite, EF Core Design, JWT Bearer, BCrypt)
 - [x] Scaffold Vue 3 + TypeScript project (`site/`) via Vite
@@ -25,6 +27,7 @@
 - [x] Verified: `npm run build` → clean production build
 
 ## Phase 2 — Backend Controllers ✅
+
 - [x] `DTOs/AuthDtos.cs` — AuthRequest (validated), AuthResponse
 - [x] `DTOs/TodoDtos.cs` — TodoRequest, TodoUpdateRequest, TodoResponse
 - [x] `AuthController` — POST /api/auth/register, POST /api/auth/login (returns JWT)
@@ -34,6 +37,7 @@
 - [x] Verified: `dotnet build` → 0 errors, 0 warnings
 
 ## Phase 3 — Frontend Views & State ✅
+
 - [x] Pinia auth store (`stores/auth.ts`) — token, username, login, register, logout
 - [x] `src/types.ts` — Todo interface
 - [x] Expand `src/router.ts` — all routes + auth guard (redirects unauth → /login, auth → /todos)
@@ -51,7 +55,25 @@
 - [x] `site/.env` — VITE_API_URL=http://localhost:5010
 - [x] Verified: `npm run build` → 0 TS errors, clean production build (96 modules)
 
+## Phase 3.5 — Integration Testing ✅
+
+- [x] Create `todoapp.slnx` and add `api/` + `api.tests/` projects
+- [x] Scaffold xUnit project (`api.tests/FunctionTodo.Api.Tests.csproj`)
+- [x] Add project reference from `api.tests` → `api`
+- [x] Add `Microsoft.AspNetCore.Mvc.Testing` + `Microsoft.EntityFrameworkCore.Sqlite` to test project
+- [x] Add `public partial class Program {}` to `api/Program.cs` (required for `WebApplicationFactory<Program>`)
+- [x] `TodoApiFactory` — `WebApplicationFactory<Program>` + `IAsyncLifetime`
+  - [x] Persistent `SqliteConnection("DataSource=:memory:")` kept open for factory lifetime
+  - [x] `ConfigureWebHost`: replaces `AppDbContext` registration with in-memory connection
+  - [x] `ConfigureWebHost`: injects test JWT key via `UseSetting` (no config file needed)
+  - [x] `InitializeAsync`: opens connection, accesses `Services` to trigger `Migrate()`, then `EnsureCreatedAsync()` as safety net
+- [x] `CreateAuthorisedClientAsync` helper — calls `POST /api/auth/register`, parses token, sets `Authorization` header; GUID suffix prevents username collisions
+- [x] **Test 1 — Ownership isolation**: User A cannot GET or DELETE User B's todo → asserts `404 Not Found`; also asserts User B can still read their own record (no data loss)
+- [x] **Test 2 — Input validation**: empty `title` → `POST /api/todos` → asserts `400 Bad Request` with RFC 7807 `errors` object
+- [x] Verified: `dotnet test` → **2 passed, 0 failed**
+
 ## Phase 4 — Polish & Submission
+
 - [ ] End-to-end smoke test (register → login → CRUD todos → sign out)
 - [ ] `.gitignore` review (exclude todo.db, dist, obj, bin)
 - [ ] README.md — setup steps, assumptions, scalability notes, future work
@@ -61,6 +83,7 @@
 ---
 
 ## Notes / Decisions
+
 - Runtime: .NET 10 (machine default) — test spec says ".NET Core" with no version pin.
 - Architecture: Controllers + DbContext only. No MediatR, CQRS, or Repository pattern.
 - Auth: JWT HS256, 7-day expiry, stored in localStorage. `api.ts` uses window.location.replace for
