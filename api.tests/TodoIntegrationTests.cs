@@ -110,4 +110,24 @@ public class TodoIntegrationTests(TodoApiFactory factory) : IClassFixture<TodoAp
         Assert.True(doc.RootElement.TryGetProperty("errors", out _),
             "Response body should contain a ProblemDetails 'errors' object.");
     }
+
+    [Fact]
+    public async Task CreateTodo_WithDefaultDueDate_Returns400BadRequest()
+    {
+        var client = await CreateAuthorisedClientAsync("defaultDateUser");
+
+        var response = await client.PostAsJsonAsync("/api/todos", new
+        {
+            title = "Valid title",
+            description = (string?)null,
+            dueDate = default(DateTime)
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(body);
+        Assert.True(doc.RootElement.TryGetProperty("errors", out _),
+            "Response body should contain a ProblemDetails 'errors' object.");
+    }
 }

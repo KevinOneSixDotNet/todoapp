@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { isAxiosError } from 'axios'
 import api from '../api'
 import type { Todo } from '../types'
 
@@ -98,8 +99,10 @@ async function submitCreate() {
     })
     todos.value.unshift(data)
     showCreateForm.value = false
-  } catch (e: any) {
-    createError.value = e.response?.data?.title ?? 'Failed to create task.'
+  } catch (e) {
+    createError.value = isAxiosError(e)
+      ? (e.response?.data?.title ?? 'Failed to create task.')
+      : 'Failed to create task.'
   } finally {
     submittingCreate.value = false
   }
@@ -127,8 +130,10 @@ async function submitEdit(todo: Todo) {
     const idx = todos.value.findIndex(t => t.id === todo.id)
     if (idx !== -1) todos.value[idx] = data
     editingId.value = null
-  } catch (e: any) {
-    editError.value = e.response?.data?.title ?? 'Failed to update task.'
+  } catch (e) {
+    editError.value = isAxiosError(e)
+      ? (e.response?.data?.title ?? 'Failed to update task.')
+      : 'Failed to update task.'
   } finally {
     submittingEdit.value = false
   }
@@ -157,8 +162,11 @@ async function deleteTodo(id: string) {
   try {
     await api.delete(`/api/todos/${id}`)
     todos.value = todos.value.filter(t => t.id !== id)
-  } catch {
-    pageError.value = 'Failed to delete task.'
+  } catch (e) {
+    pageError.value = isAxiosError(e)
+      ? (e.response?.data?.title ?? 'Failed to delete task.')
+      : 'Failed to delete task.'
+  } finally {
     deletingId.value = null
   }
 }

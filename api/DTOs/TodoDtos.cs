@@ -1,17 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using FunctionTodo.Api.Validation;
 
 namespace FunctionTodo.Api.DTOs;
 
 public record TodoRequest(
     [Required][MaxLength(100)] string Title,
-    string? Description,
-    DateTime DueDate
+    [MaxLength(2000)] string? Description,
+    [NotDefaultDate] DateTime DueDate
 );
 
 public record TodoUpdateRequest(
     [Required][MaxLength(100)] string Title,
-    string? Description,
-    DateTime DueDate,
+    [MaxLength(2000)] string? Description,
+    [NotDefaultDate] DateTime DueDate,
     bool IsComplete
 );
 

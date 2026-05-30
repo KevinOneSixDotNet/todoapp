@@ -11,6 +11,7 @@ public class Todo
     [MaxLength(100)]
     public string Title { get; set; } = string.Empty;
 
+    [MaxLength(2000)]
     public string? Description { get; set; }
 
     public DateTime DueDate { get; set; }

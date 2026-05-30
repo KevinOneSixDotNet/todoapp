@@ -20,7 +20,7 @@ public class AuthController(AppDbContext db, IConfiguration config) : Controller
         if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
         if (await db.Users.AnyAsync(u => u.Username == req.Username))
-            return Conflict(new { message = "Username is already taken." });
+            return Problem(statusCode: StatusCodes.Status409Conflict, title: "Username is already taken.");
 
         var user = new User
         {
@@ -40,7 +40,7 @@ public class AuthController(AppDbContext db, IConfiguration config) : Controller
 
         var user = await db.Users.FirstOrDefaultAsync(u => u.Username == req.Username);
         if (user is null || !BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHash))
-            return Unauthorized(new { message = "Invalid username or password." });
+            return Problem(statusCode: StatusCodes.Status401Unauthorized, title: "Invalid username or password.");
 
         return Ok(new AuthResponse(GenerateToken(user), user.Username));
     }

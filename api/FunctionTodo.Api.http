@@ -1,6 +1,63 @@
-@FunctionTodo.Api_HostAddress = http://localhost:5010
+@host = http://localhost:5010
+@token = <paste-jwt-token-here>
 
-GET {{FunctionTodo.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Register a new user
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "kevin",
+  "password": "Password123!"
+}
+
+###
+
+### Login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "kevin",
+  "password": "Password123!"
+}
+
+###
+
+### Get all todos (requires token)
+GET {{host}}/api/todos
+Authorization: Bearer {{token}}
+
+###
+
+### Create a todo (requires token)
+POST {{host}}/api/todos
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Book annual health check",
+  "description": "Call the clinic to schedule",
+  "dueDate": "2026-06-15T00:00:00Z"
+}
+
+###
+
+### Update a todo (replace {id} with a real GUID)
+PUT {{host}}/api/todos/{id}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Book annual health check",
+  "description": "Scheduled for June 15",
+  "dueDate": "2026-06-15T00:00:00Z",
+  "isComplete": true
+}
+
+###
+
+### Delete a todo (replace {id} with a real GUID)
+DELETE {{host}}/api/todos/{id}
+Authorization: Bearer {{token}}
 
 ###
