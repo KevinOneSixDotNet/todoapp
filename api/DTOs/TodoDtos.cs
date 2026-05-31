@@ -6,13 +6,13 @@ namespace FunctionTodo.Api.DTOs;
 public record TodoRequest(
     [Required][MaxLength(100)] string Title,
     [MaxLength(2000)] string? Description,
-    [NotDefaultDate] DateTime DueDate
+    [ValidDueDate] DateTime DueDate
 );
 
 public record TodoUpdateRequest(
     [Required][MaxLength(100)] string Title,
     [MaxLength(2000)] string? Description,
-    [NotDefaultDate] DateTime DueDate,
+    [ValidDueDate] DateTime DueDate,
     bool IsComplete
 );
 
