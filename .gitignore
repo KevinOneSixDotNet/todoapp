@@ -1,0 +1,23 @@
+# .NET build output
+/api/bin/
+/api/obj/
+/api.tests/bin/
+/api.tests/obj/
+
+# SQLite database files (auto-created on first run)
+*.db
+*.db-shm
+*.db-wal
+
+# Frontend build output and dependencies
+/site/dist/
+/site/node_modules/
+
+# Environment overrides (may contain secrets)
+/site/.env.local
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.user
+.vs/

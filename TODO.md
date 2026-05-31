@@ -10,3 +10,9 @@ Dev Setup
 8. script setup + startup
 
 SqlLite (dotnet add package Microsoft.EntityFrameworkCore.Sqlite)
+
+What are the important features?
+Time Zones
+Audit Trail
+Security
+API Documentation
