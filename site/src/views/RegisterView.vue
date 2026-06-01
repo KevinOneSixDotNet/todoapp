@@ -32,11 +32,12 @@ async function handleSubmit() {
     router.push('/todos')
   } catch (e: any) {
     const data = e.response?.data
+    const errors = data?.errors as Record<string, string[]> | undefined
+    // Surface field validation messages (e.g. "Password too short") but not
+    // conflict reasons — confirming a username exists enables enumeration attacks.
     error.value =
-      data?.message ??
-      data?.errors?.Password?.[0] ??
-      data?.errors?.Username?.[0] ??
-      'Registration failed. Please try again.'
+      (errors && Object.values(errors).flat()[0]) ??
+      'Registration failed. Please check your details and try again.'
   } finally {
     loading.value = false
   }

@@ -13,11 +13,14 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Redirect to login on 401 — avoids circular import with router/stores
+// Redirect to login on 401, but not for auth endpoints — a 401 from
+// /api/auth/login is a credential failure, not an expired session, and
+// the component's own catch block handles displaying the error.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const url: string = error.config?.url ?? ''
+    if (error.response?.status === 401 && !url.includes('/api/auth/')) {
       localStorage.removeItem('token')
       localStorage.removeItem('username')
       window.location.replace('/login')
