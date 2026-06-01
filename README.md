@@ -41,11 +41,11 @@ dotnet test
 
 ## Tech Stack
 
-| Layer        | Choice                                                                  |
-| ------------ | ---------------------------------------------------------------------- |
-| **Backend**  | .NET 10 Web API (controllers), EF Core 10, SQLite                      |
-| **Auth**     | JWT bearer tokens (HS256), BCrypt password hashing                     |
-| **Frontend** | Vue 3 (Composition API) + TypeScript, Vite, Tailwind CSS, Pinia, Axios |
+| Layer        | Choice                                                                   |
+| ------------ | ------------------------------------------------------------------------ |
+| **Backend**  | .NET 10 Web API (controllers), EF Core 10, SQLite                        |
+| **Auth**     | JWT bearer tokens (HS256), BCrypt password hashing                       |
+| **Frontend** | Vue 3 (Composition API) + TypeScript, Vite, Tailwind CSS, Pinia, Axios   |
 | **Testing**  | xUnit + `WebApplicationFactory` integration tests over SQLite `:memory:` |
 
 ---
@@ -74,9 +74,7 @@ returns **404** (we don't confirm it exists — see Security).
 
 I scoped this as a production-minded backend slice rather than a feature-heavy
 todo app. I focused on auth, ownership boundaries, validation, typed API
-interaction, persistence, and integration tests. For a healthcare system, the
-next step would not be more UI features first; it would be auditability, token
-hardening, PHI-safe logging, and operational controls.
+interaction, persistence, and integration tests.
 
 In keeping with that, the backend is deliberately kept at the right altitude for
 a single-aggregate CRUD app — **controllers talk directly to `DbContext`**:
@@ -109,11 +107,8 @@ a single-aggregate CRUD app — **controllers talk directly to `DbContext`**:
 
 ## Testing Strategy
 
-I intentionally prioritized backend integration tests around validation and
-ownership because those are the highest-risk areas for this role and this domain.
-The Vue layer is intentionally thin and manually demoable. With more time, I would
-add Vitest coverage around optimistic UI rollback and form validation, plus one
-Playwright happy path.
+I intentionally prioritized backend integration tests around data ownership and validation
+because those are the highest-risk areas for this role and domain.
 
 The integration tests run against `WebApplicationFactory<Program>` backed by
 SQLite `:memory:` (not the EF Core InMemory provider, which ignores relational
@@ -123,17 +118,19 @@ constraints), and exercise real auth by registering users and using the returned
 
 ## Future Work (Production Roadmap)
 
-**First sprint before real-user traffic:**
+**With One More Day:**
 
-- Audit timestamps (`CreatedAt`/`UpdatedAt`) and access logging.
-- Refresh-token flow with an HttpOnly cookie (replacing localStorage).
-- Production database (SQL Server / PostgreSQL) and structured migrations.
-- Rate limiting on auth endpoints.
-- PHI-safe structured logging (e.g. Serilog).
+1. The Vue layer is intentionally thin and manually demoable. With more time, I would
+   add Vitest coverage around optimistic UI rollback and form validation, plus one
+   Playwright happy path.
+2. Refresh-token flow with an HttpOnly cookie (replacing localStorage).
+3. More UX Versatility - Ordered & Unordered Lists
+4. Rate limiting on auth endpoints.
 
-**Next tier for scale:**
+**With One More Week:**
 
-- Pagination, filtering, and sorting.
-- Request correlation IDs.
-- CI pipeline for automated testing.
-- Containerized local setup (Docker Compose).
+1. PHI-safe structured logging (e.g. Serilog).
+2. Audit timestamps (`CreatedAt`/`UpdatedAt`) and access logging.
+3. Pagination, filtering, and sorting.
+4. CI pipeline for automated testing.
+5. Production database (SQL Server / PostgreSQL) and structured migrations.
