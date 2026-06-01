@@ -99,6 +99,7 @@ async function submitCreate() {
     })
     todos.value.unshift(data)
     showCreateForm.value = false
+    filter.value = 'all'
   } catch (e) {
     createError.value = isAxiosError(e)
       ? (e.response?.data?.title ?? 'Failed to create task.')
