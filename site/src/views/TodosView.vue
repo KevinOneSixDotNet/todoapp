@@ -39,6 +39,19 @@ const counts = computed(() => ({
 }))
 
 // ── Helpers ────────────────────────────────────────────────────────────────
+function apiError(e: unknown, fallback: string): string {
+  if (!isAxiosError(e)) return fallback
+  const data = e.response?.data
+  if (!data) return fallback
+  // ProblemDetails validation errors live in data.errors, not data.title
+  const errors = data.errors as Record<string, string[]> | undefined
+  if (errors) {
+    const first = Object.values(errors).flat()[0]
+    if (first) return first
+  }
+  return data.title ?? fallback
+}
+
 function todayStr() {
   return new Date().toISOString().slice(0, 10)
 }
@@ -101,9 +114,7 @@ async function submitCreate() {
     showCreateForm.value = false
     filter.value = 'all'
   } catch (e) {
-    createError.value = isAxiosError(e)
-      ? (e.response?.data?.title ?? 'Failed to create task.')
-      : 'Failed to create task.'
+    createError.value = apiError(e, 'Failed to create task.')
   } finally {
     submittingCreate.value = false
   }
@@ -132,9 +143,7 @@ async function submitEdit(todo: Todo) {
     if (idx !== -1) todos.value[idx] = data
     editingId.value = null
   } catch (e) {
-    editError.value = isAxiosError(e)
-      ? (e.response?.data?.title ?? 'Failed to update task.')
-      : 'Failed to update task.'
+    editError.value = apiError(e, 'Failed to update task.')
   } finally {
     submittingEdit.value = false
   }
@@ -164,9 +173,7 @@ async function deleteTodo(id: string) {
     await api.delete(`/api/todos/${id}`)
     todos.value = todos.value.filter(t => t.id !== id)
   } catch (e) {
-    pageError.value = isAxiosError(e)
-      ? (e.response?.data?.title ?? 'Failed to delete task.')
-      : 'Failed to delete task.'
+    pageError.value = apiError(e, 'Failed to delete task.')
   } finally {
     deletingId.value = null
   }
