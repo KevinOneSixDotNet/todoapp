@@ -32,10 +32,10 @@ async function handleSubmit() {
     router.push('/todos')
   } catch (e: any) {
     const data = e.response?.data
+    const errors = data?.errors as Record<string, string[]> | undefined
     error.value =
-      data?.message ??
-      data?.errors?.Password?.[0] ??
-      data?.errors?.Username?.[0] ??
+      (errors && Object.values(errors).flat()[0]) ??
+      data?.title ??
       'Registration failed. Please try again.'
   } finally {
     loading.value = false
