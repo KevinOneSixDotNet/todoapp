@@ -22,7 +22,7 @@ async function handleSubmit() {
     await auth.login(username.value, password.value)
     router.push('/todos')
   } catch (e: any) {
-    error.value = e.response?.data?.message ?? 'Invalid username or password.'
+    error.value = e.response?.data?.title ?? 'Invalid username or password.'
   } finally {
     loading.value = false
   }
