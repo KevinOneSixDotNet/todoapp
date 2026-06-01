@@ -99,6 +99,20 @@ a single-aggregate CRUD app — **controllers talk directly to `DbContext`**:
   `WHERE UserId == <caller>`, so cross-user access returns **404**, not 403 —
   avoiding information disclosure. Covered by an integration test.
 - **CORS** locked to the Vite dev origin (`http://localhost:5173`).
+- **Username enumeration prevention.** The registration form intentionally shows a generic failure message rather than surfacing the backend's 409 conflict reason. The backend returns a proper RFC 7807 `ProblemDetails` response, so a client could handle it specifically if product requirements dictated it — but confirming whether a username exists is an information leak by default.
+
+**Why BCrypt?** It's a deliberately slow, adaptive hash built for passwords —
+the opposite of a fast general-purpose hash like SHA-256. The work factor is
+tunable (and encoded in each hash), so the cost can be raised over time as
+hardware improves without breaking existing credentials. It also salts every
+hash automatically, which defeats rainbow tables and means identical passwords
+produce different hashes. The trade-offs: that intentional slowness is a small
+per-login CPU cost (and a throttle against brute-force attempts), and BCrypt
+truncates inputs beyond 72 bytes — a non-issue for normal passwords. For a
+greenfield system today, **Argon2id** is the stronger modern choice (it also
+resists GPU/ASIC attacks via memory-hardness); BCrypt was chosen here for its
+maturity, ubiquitous library support, and zero-config safety, which makes it
+the pragmatic default for a service of this size.
 
 > ⚠️ The JWT key in `appsettings.json` is a placeholder. Before any real
 > deployment, supply a strong secret via environment variable or secrets manager.

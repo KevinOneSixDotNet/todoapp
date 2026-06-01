@@ -33,10 +33,11 @@ async function handleSubmit() {
   } catch (e: any) {
     const data = e.response?.data
     const errors = data?.errors as Record<string, string[]> | undefined
+    // Surface field validation messages (e.g. "Password too short") but not
+    // conflict reasons — confirming a username exists enables enumeration attacks.
     error.value =
       (errors && Object.values(errors).flat()[0]) ??
-      data?.title ??
-      'Registration failed. Please try again.'
+      'Registration failed. Please check your details and try again.'
   } finally {
     loading.value = false
   }
