@@ -1,4 +1,4 @@
-# Function Health - Task Tracker
+# To-Do Task Tracker
 
 A full-stack to-do application: a .NET 10 Web API with JWT auth and EF Core /
 SQLite persistence, paired with a Vue 3 + TypeScript single-page frontend.
@@ -41,11 +41,11 @@ dotnet test
 
 ## Tech Stack
 
-| Layer        | Choice                                                                  |
-| ------------ | ---------------------------------------------------------------------- |
-| **Backend**  | .NET 10 Web API (controllers), EF Core 10, SQLite                      |
-| **Auth**     | JWT bearer tokens (HS256), BCrypt password hashing                     |
-| **Frontend** | Vue 3 (Composition API) + TypeScript, Vite, Tailwind CSS, Pinia, Axios |
+| Layer        | Choice                                                                   |
+| ------------ | ------------------------------------------------------------------------ |
+| **Backend**  | .NET 10 Web API (controllers), EF Core 10, SQLite                        |
+| **Auth**     | JWT bearer tokens (HS256), BCrypt password hashing                       |
+| **Frontend** | Vue 3 (Composition API) + TypeScript, Vite, Tailwind CSS, Pinia, Axios   |
 | **Testing**  | xUnit + `WebApplicationFactory` integration tests over SQLite `:memory:` |
 
 ---
