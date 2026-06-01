@@ -162,8 +162,9 @@ async function toggleComplete(todo: Todo) {
       isComplete: !todo.isComplete,
     })
     todos.value[idx] = data
-  } catch {
-    todos.value[idx] = todo // revert
+  } catch (e) {
+    todos.value[idx] = todo
+    pageError.value = apiError(e, 'Failed to update task. Your change was not saved.')
   }
 }
 
