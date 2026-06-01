@@ -1,4 +1,4 @@
-# Function Health - Task Tracker
+# To-Do Task Management Tracker
 
 A full-stack to-do application: a .NET 10 Web API with JWT auth and EF Core /
 SQLite persistence, paired with a Vue 3 + TypeScript single-page frontend.
@@ -116,7 +116,7 @@ constraints), and exercise real auth by registering users and using the returned
 
 ---
 
-## Future Work (Production Roadmap)
+## What I Would Do Next
 
 **With One More Day:**
 
