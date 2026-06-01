@@ -9,7 +9,7 @@ SQLite persistence, paired with a Vue 3 + TypeScript single-page frontend.
 
 The backend and frontend run as two separate processes. Open two terminals.
 
-**Prerequisites:** .NET 10 SDK and Node.js 18+ (with npm).
+**Prerequisites:** .NET 10 SDK and Node.js 24+ (with npm).
 
 **API** (starts on http://localhost:5010):
 

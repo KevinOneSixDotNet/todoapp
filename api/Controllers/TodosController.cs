@@ -46,7 +46,7 @@ public class TodosController(AppDbContext db) : ControllerBase
             UserId = UserId,
             Title = req.Title,
             Description = req.Description,
-            DueDate = req.DueDate,
+            DueDate =  req.DueDate,
         };
         db.Todos.Add(todo);
         await db.SaveChangesAsync();
