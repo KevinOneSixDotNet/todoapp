@@ -9,7 +9,7 @@ SQLite persistence, paired with a Vue 3 + TypeScript single-page frontend.
 
 The backend and frontend run as two separate processes. Open two terminals.
 
-**Prerequisites:** .NET 10 SDK and Node.js 18+ (with npm).
+**Prerequisites:** .NET 10 SDK and Node.js 24+ (with npm).
 
 **API** (starts on http://localhost:5010):
 
@@ -74,9 +74,7 @@ returns **404** (we don't confirm it exists — see Security).
 
 I scoped this as a production-minded backend slice rather than a feature-heavy
 todo app. I focused on auth, ownership boundaries, validation, typed API
-interaction, persistence, and integration tests. For a healthcare system, the
-next step would not be more UI features first; it would be auditability, token
-hardening, PHI-safe logging, and operational controls.
+interaction, persistence, and integration tests.
 
 In keeping with that, the backend is deliberately kept at the right altitude for
 a single-aggregate CRUD app — **controllers talk directly to `DbContext`**:
@@ -101,6 +99,19 @@ a single-aggregate CRUD app — **controllers talk directly to `DbContext`**:
   `WHERE UserId == <caller>`, so cross-user access returns **404**, not 403 —
   avoiding information disclosure. Covered by an integration test.
 - **CORS** locked to the Vite dev origin (`http://localhost:5173`).
+- **Username enumeration prevention.** The registration form intentionally shows a generic failure message rather than surfacing the backend's 409 conflict reason. The backend returns a proper RFC 7807 `ProblemDetails` response, so a client could handle it specifically if product requirements dictated it — but confirming whether a username exists is an information leak by default.
+- **Why BCrypt?** It's a deliberately slow, adaptive hash built for passwords —
+  the opposite of a fast general-purpose hash like SHA-256. The work factor is
+  tunable (and encoded in each hash), so the cost can be raised over time as
+  hardware improves without breaking existing credentials. It also salts every
+  hash automatically, which defeats rainbow tables and means identical passwords
+  produce different hashes. The trade-offs: that intentional slowness is a small
+  per-login CPU cost (and a throttle against brute-force attempts), and BCrypt
+  truncates inputs beyond 72 bytes — a non-issue for normal passwords. For a
+  greenfield system today, **Argon2id** is the stronger modern choice (it also
+  resists GPU/ASIC attacks via memory-hardness); BCrypt was chosen here for its
+  maturity, ubiquitous library support, and zero-config safety, which makes it
+  the pragmatic default for a service of this size.
 
 > ⚠️ The JWT key in `appsettings.json` is a placeholder. Before any real
 > deployment, supply a strong secret via environment variable or secrets manager.
@@ -109,11 +120,8 @@ a single-aggregate CRUD app — **controllers talk directly to `DbContext`**:
 
 ## Testing Strategy
 
-I intentionally prioritized backend integration tests around validation and
-ownership because those are the highest-risk areas for this role and this domain.
-The Vue layer is intentionally thin and manually demoable. With more time, I would
-add Vitest coverage around optimistic UI rollback and form validation, plus one
-Playwright happy path.
+I intentionally prioritized backend integration tests around data ownership and validation
+because those are the highest-risk areas for this role and domain.
 
 The integration tests run against `WebApplicationFactory<Program>` backed by
 SQLite `:memory:` (not the EF Core InMemory provider, which ignores relational
@@ -121,19 +129,21 @@ constraints), and exercise real auth by registering users and using the returned
 
 ---
 
-## Future Work (Production Roadmap)
+## What I Would Do Next
 
-**First sprint before real-user traffic:**
+**With One More Day:**
 
-- Audit timestamps (`CreatedAt`/`UpdatedAt`) and access logging.
-- Refresh-token flow with an HttpOnly cookie (replacing localStorage).
-- Production database (SQL Server / PostgreSQL) and structured migrations.
-- Rate limiting on auth endpoints.
-- PHI-safe structured logging (e.g. Serilog).
+1. The Vue layer is intentionally thin and manually demoable. With more time, I would
+   add Vitest coverage around optimistic UI rollback and form validation, plus one
+   Playwright happy path.
+2. Refresh-token flow with an HttpOnly cookie (replacing localStorage).
+3. More UX Versatility - Ordered & Unordered Lists
+4. Rate limiting on auth endpoints.
 
-**Next tier for scale:**
+**With One More Week:**
 
-- Pagination, filtering, and sorting.
-- Request correlation IDs.
-- CI pipeline for automated testing.
-- Containerized local setup (Docker Compose).
+1. PHI-safe structured logging (e.g. Serilog).
+2. Audit timestamps (`CreatedAt`/`UpdatedAt`) and access logging.
+3. Pagination, filtering, and sorting.
+4. CI pipeline for automated testing.
+5. Production database (SQL Server / PostgreSQL) and structured migrations.
